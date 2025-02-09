@@ -20,6 +20,11 @@ detected_lang = None
 data_path = None
 
 if uploaded_file:
+    # Save uploaded image temporarily
+    temp_image_path = "temp_report.png"
+    with open(temp_image_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
     st.sidebar.text("🔄 Processing...")
     patient_id = process_lft_pipeline(temp_image_path)
 
@@ -37,7 +42,6 @@ if uploaded_file:
             df = pd.read_csv(data_path)
             st.subheader(f"📂 Patient Records (ID: {patient_id})")
             st.dataframe(df)
-
 
 st.markdown("---")
 st.markdown("**ℹ Note:** The app automatically processes and stores LFT data for detected patient IDs.")
