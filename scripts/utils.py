@@ -45,6 +45,16 @@ RUSSIAN_LABELS = {
     "International Normalized Ratio (INR)": "Международное нормализованное отношение"
 }
 
+def detect_language(text: str) -> str:
+    """
+    Detects the language of a given text.
+    Returns 'en' for English, 'ru' for Russian, or 'unknown' if detection fails.
+    """
+    try:
+        return langdetect.detect(text)
+    except langdetect.lang_detect_exception.LangDetectException:
+        return "unknown"
+
 def extract_text_from_image(image_path: str):
     """
     Extracts text from an LFT medical image using OCR and detects its language.
