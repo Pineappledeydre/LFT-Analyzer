@@ -49,7 +49,7 @@ if os.path.exists(data_path):
 
     # Show trend plots
     st.subheader("📈 Test Trends Over Time")
-    plot_separate_patient_trends(patient_id, detected_lang)
+    plot_separate_patient_trends(patient_id, detected_language)
 
 else:
     st.warning(f"⚠ No records found for Patient {patient_id}. Please upload an LFT report.")
