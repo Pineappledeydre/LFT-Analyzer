@@ -52,6 +52,22 @@ RUSSIAN_LABELS = {
     "International Normalized Ratio (INR)": "Международное нормализованное отношение"
 }
 
+REFERENCE_RANGES = {
+    "Total Bilirubin": (0.5, 20.5),
+    "Direct Bilirubin": (0.1, 5),
+    "Indirect Bilirubin": (0.1, 16.4),
+    "Alanine Aminotransferase (ALT/SGPT)": (0.1, 45),
+    "Aspartate Aminotransferase (AST/SGOT)": (0.1, 45),
+    "Alkaline Phosphatase (ALP)": (40,400),
+    "Gamma-Glutamyl Transferase (GGT)": (0,55),
+    "Total Protein": (62,83),
+    "Albumin": (32,54),
+    "Globulin": (13,77),
+    "Albumin/Globulin (A/G) Ratio": (1.5,2.4),
+    "Prothrombin Time (PT)": (9, 12.5),
+    "International Normalized Ratio (INR)": (0.7, 1.5)
+}
+
 def detect_language(text: str) -> str:
     """
     Detects the language of a given text.
@@ -266,15 +282,15 @@ def update_patient_record(data: dict):
 
 def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     """
-    Plots separate trend lines for each test result.
-    - Uses Russian labels if language == "ru"
+    Plots separate trend lines for each test result with abnormal values highlighted.
+    - Allows user to select which tests to visualize.
     """
-    patient_csv_path = f"data/patient_{patient_id}.csv"  # ✅ Ensure correct path
+    patient_csv_path = f"data/patient_{patient_id}.csv"
 
     if not os.path.exists(patient_csv_path):
         st.warning(f"⚠ No records found for Patient {patient_id}.")
         return
-    
+
     df = pd.read_csv(patient_csv_path)
     df["date_of_test"] = pd.to_datetime(df["date_of_test"], errors="coerce")
     df = df.sort_values(by="date_of_test")
@@ -286,18 +302,33 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    for test in test_columns:
-        translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
+    # 🔘 Let the user choose which tests to visualize
+    selected_tests = st.multiselect(
+        "📊 Select Tests to Display",
+        options=test_columns,
+        default=test_columns[:3],  # Show first 3 by default
+        format_func=lambda x: RUSSIAN_LABELS.get(x, x) if language == "ru" else x,
+    )
 
-        fig, ax = plt.subplots(figsize=(10, 5))  # ✅ Use Streamlit-friendly plotting
+    for test in selected_tests:
+        translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
+        fig, ax = plt.subplots(figsize=(10, 5))
+
         ax.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
+
+        # Highlight abnormal ranges
+        if test in REFERENCE_RANGES:
+            low, high = REFERENCE_RANGES[test]
+            ax.fill_between(df["date_of_test"], low, high, color="green", alpha=0.2, label="Normal Range")
+            ax.scatter(df["date_of_test"], df[test], c=['red' if (v < low or v > high) else 'blue' for v in df[test]], s=80)
 
         ax.set_xlabel("Дата анализа" if language == "ru" else "Test Date")
         ax.set_ylabel(f"{translated_label} (U/L or mg/dL)")
         ax.set_title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
+
         ax.legend()
         ax.grid(True)
         plt.xticks(rotation=45)
 
-        st.pyplot(fig)  # ✅ Use st.pyplot() instead of plt.show()
-        plt.close(fig)  # ✅ Prevent memory leaks
+        st.pyplot(fig)
+        plt.close(fig)  # Prevent memory leaks
