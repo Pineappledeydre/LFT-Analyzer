@@ -16,6 +16,7 @@ uploaded_file = st.sidebar.file_uploader("Upload an LFT Report (Image)", type=["
 
 # Initialize Patient ID (fallback)
 patient_id = "12345"
+detected_lang = "en"
 
 if uploaded_file:
     # Save uploaded image temporarily
