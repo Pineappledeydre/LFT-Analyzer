@@ -1,2 +1,5 @@
+cmake
+build-essential
+
 tesseract-ocr
 libtesseract-dev
