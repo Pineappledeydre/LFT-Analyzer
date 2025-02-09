@@ -9,7 +9,8 @@ from scripts.utils import (
     preprocess_image
 )
 
-def process_lft_pipeline(image_path: str) -> str:
+
+def process_lft_pipeline(image_path: str) -> tuple:
     """
     Complete pipeline for processing LFT reports:
     - Extract text & detect language
@@ -18,7 +19,7 @@ def process_lft_pipeline(image_path: str) -> str:
     - Plot trends (use Russian labels if detected_lang == 'ru')
 
     Returns:
-        str: Extracted patient ID (or "12345" if missing)
+        tuple: (patient_id, detected_lang)
     """
     print("🔄 Extracting text from LFT report...")
     extracted_text, detected_lang = extract_text_from_image(image_path)
@@ -41,4 +42,4 @@ def process_lft_pipeline(image_path: str) -> str:
     print(f"📈 Visualizing NAFLD trend for Patient {patient_id}...")
     plot_separate_patient_trends(patient_id, detected_lang)  # ✅ Use Russian labels if detected
 
-    return patient_id  # ✅ Return extracted or fallback ID
+    return patient_id, detected_lang  # ✅ FIXED: Now returns both values
