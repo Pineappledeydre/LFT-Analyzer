@@ -307,10 +307,9 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    # ✅ Generate a unique key using patient_id and session state
-    key_id = f"test_select_{patient_id}_{st.session_state.get('test_select_count', 0)}"
-    st.session_state["test_select_count"] = st.session_state.get("test_select_count", 0) + 1  # Increment key
-
+    # ✅ Ensure a unique key for each patient
+    key_id = f"test_select_{patient_id}"
+    
     selected_tests = st.multiselect(
         "📊 Select Tests to Display",
         test_columns,

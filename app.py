@@ -19,13 +19,14 @@ patient_id = None
 detected_lang = None
 data_path = None
 
+
 if uploaded_file:
     # Save uploaded image temporarily
     temp_image_path = "temp_report.png"
     with open(temp_image_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    result = process_lft_pipeline(temp_image_path)  
+    result = process_lft_pipeline(temp_image_path)
 
     if isinstance(result, tuple):  # Ensure it's correctly unpacked
         patient_id, detected_lang = result
@@ -36,10 +37,8 @@ if uploaded_file:
     # Show success message
     st.sidebar.success(f"✅ Report processed successfully for Patient {patient_id}!")
 
-    # 📊 Show trend plots (even if table is hidden)
-    st.subheader("📈 Test Trends Over Time")
-    plot_separate_patient_trends(patient_id, "en")  # ✅ Call function
-
+    # **Do not plot automatically** (move to below)
+    
     # Show patient data only if available and button clicked
     data_path = f"data/patient_{patient_id}.csv"
     if os.path.exists(data_path):
@@ -47,6 +46,10 @@ if uploaded_file:
             df = pd.read_csv(data_path)
             st.subheader(f"📂 Patient Records (ID: {patient_id})")
             st.dataframe(df)
+
+        # ✅ Allow user to select tests before plotting
+        st.subheader("📈 Test Trends Over Time")
+        plot_separate_patient_trends(patient_id, detected_lang)  # ✅ Now inside the conditional
 
 st.markdown("---")
 st.markdown("**ℹ Note:** The app automatically processes and stores LFT data for detected patient IDs.")
