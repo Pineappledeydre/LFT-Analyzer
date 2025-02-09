@@ -285,7 +285,8 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     Plots selected test trends with:
     - Green corridors for normal reference ranges
     - Red shading for abnormal values
-    - User selection of tests to display (Unique Key Fix Applied)
+    - User selection of tests to display
+    - ✅ Unique `key` to prevent duplicate widget errors
     """
     if isinstance(patient_id, tuple):  # ✅ Fix tuple issue
         patient_id = patient_id[0]
@@ -307,8 +308,8 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    # ✅ Generate a unique key using session state
-    widget_key = f"test_select_{patient_id}_{st.session_state.get('run_id', 0)}"
+    # ✅ Generate a unique key using patient ID
+    widget_key = f"test_select_{patient_id}"
 
     selected_tests = st.multiselect(
         "📊 Select Tests to Display",

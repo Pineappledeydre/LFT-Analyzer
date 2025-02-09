@@ -14,11 +14,10 @@ st.title("Liver Function Test (LFT) Analyzer")
 st.sidebar.header("📤 Upload LFT Report")
 uploaded_file = st.sidebar.file_uploader("Upload an LFT Report (Image)", type=["png", "jpg", "jpeg"])
 
-# Only show table and plots after processing
+# Initialize variables
 patient_id = None
 detected_lang = None
 data_path = None
-
 
 if uploaded_file:
     # Save uploaded image temporarily
@@ -26,30 +25,29 @@ if uploaded_file:
     with open(temp_image_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    result = process_lft_pipeline(temp_image_path)
+    # Process LFT report
+    result = process_lft_pipeline(temp_image_path)  
 
-    if isinstance(result, tuple):  # Ensure it's correctly unpacked
+    if isinstance(result, tuple):  # ✅ Ensure correct unpacking
         patient_id, detected_lang = result
     else:
         patient_id = result
-        detected_lang = "en"  # Default language if not returned
+        detected_lang = "en"  # Default language
 
     # Show success message
     st.sidebar.success(f"✅ Report processed successfully for Patient {patient_id}!")
 
-    # **Do not plot automatically** (move to below)
-    
-    # Show patient data only if available and button clicked
+    # 📂 Check if patient data exists
     data_path = f"data/patient_{patient_id}.csv"
     if os.path.exists(data_path):
-        if st.button("📂 Show Patient Records"):  
-            df = pd.read_csv(data_path)
-            st.subheader(f"📂 Patient Records (ID: {patient_id})")
-            st.dataframe(df)
+        # 📊 Show patient data **before** plotting
+        df = pd.read_csv(data_path)
+        st.subheader(f"📂 Patient Records (ID: {patient_id})")
+        st.dataframe(df)  # ✅ Display table before plots
 
-        # ✅ Allow user to select tests before plotting
+        # 📊 Show trend plots **only if the table exists**
         st.subheader("📈 Test Trends Over Time")
-        plot_separate_patient_trends(patient_id, detected_lang)  # ✅ Now inside the conditional
+        plot_separate_patient_trends(patient_id, detected_lang)  # ✅ Only called after patient data check
 
 st.markdown("---")
 st.markdown("**ℹ Note:** The app automatically processes and stores LFT data for detected patient IDs.")
