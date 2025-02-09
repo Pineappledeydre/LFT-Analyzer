@@ -5,7 +5,8 @@ from scripts.utils import (
     extract_lft_data,
     format_results_for_display,
     update_patient_record,
-    plot_separate_patient_trends
+    plot_separate_patient_trends,
+    preprocess_image
 )
 
 def process_lft_pipeline(image_path: str) -> tuple:

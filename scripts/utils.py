@@ -55,6 +55,29 @@ def detect_language(text: str) -> str:
     except langdetect.lang_detect_exception.LangDetectException:
         return "unknown"
 
+def preprocess_image(image_path: str) -> np.ndarray:
+    """
+    Preprocesses an LFT image for better OCR digit extraction.
+    - Converts to grayscale
+    - Enhances contrast using CLAHE
+    - Sharpens image using kernel
+    - Uses Gaussian Blur for denoising
+    """
+    img = cv2.imread(image_path)
+    if img is None:
+        raise FileNotFoundError(f"Error: The file '{image_path}' does not exist or cannot be read.")
+    # to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Apply CLAHE for better contrast (avoids overexposure)
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+    contrast_enhanced = clahe.apply(gray)
+    # Apply Sharpening Kernel to enhance digits
+    sharpening_kernel = np.array([[0,-1,0], [-1,5,-1], [0,-1,0]])
+    sharpened = cv2.filter2D(contrast_enhanced, -1, sharpening_kernel)
+    # Apply Gaussian Blur to reduce noise while keeping digits readable
+    processed_img = cv2.GaussianBlur(sharpened, (3,3), 0)
+    return processed_img
+
 def extract_text_from_image(image_path: str):
     """
     Extracts text from an LFT medical image using OCR and detects its language.
