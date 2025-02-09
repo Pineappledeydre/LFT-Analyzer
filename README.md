@@ -26,17 +26,17 @@ LFT Analyzer processes **Liver Function Test (LFT) reports** from **images** usi
 ---
 
 ## **Features**
-✅ **Upload an LFT Image** (JPG/PNG)  
-✅ **Extract Test Results using OCR** (Tesseract)  
-✅ **Support for English & Russian Reports**  
-✅ **Automatically Detect & Translate Russian Reports**  
-✅ **Save Patient Data as CSV**  
-✅ **Plot Individual Test Trends Over Time** 
-✅ **Simple Web UI with Streamlit**  
+- **Upload an LFT Image** (JPG/PNG)
+- **Extract Test Results using OCR** (Tesseract)
+- **Support for English & Russian Reports**
+- **Automatically Detect & Translate Russian Reports**
+- **Save Patient Data as CSV**
+- **Plot Individual Test Trends Over Time**
+- **Simple Web UI with Streamlit**  
 
 ---
 
-## **⚡ Quick Start**
+## **Quick Start**
 ### **Install Dependencies**
 ```bash
 pip install -r requirements.txt
