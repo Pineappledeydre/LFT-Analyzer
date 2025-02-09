@@ -262,38 +262,51 @@ def update_patient_record(data: dict):
         print(f"Created new record file `{patient_csv_path}` for Patient {patient_id}.")
 
 
-def plot_separate_patient_trends(patient_id: str, language: str = "en"):
-    """
-    Plots separate trend lines for each test result.
-    - Uses Russian labels if language == "ru"
-    """
-    patient_csv_path = f"patient_{patient_id}.csv"
+# def plot_separate_patient_trends(patient_id: str, language: str = "en"):
+#     """
+#     Plots separate trend lines for each test result.
+#     - Uses Russian labels if language == "ru"
+#     """
+#     patient_csv_path = f"patient_{patient_id}.csv"
 
-    if not os.path.exists(patient_csv_path):
-        print(f"No records found for Patient {patient_id}.")
-        return
+#     if not os.path.exists(patient_csv_path):
+#         print(f"No records found for Patient {patient_id}.")
+#         return
     
-    df = pd.read_csv(patient_csv_path)
-    df["date_of_test"] = pd.to_datetime(df["date_of_test"], errors="coerce")
-    df = df.sort_values(by="date_of_test")
+#     df = pd.read_csv(patient_csv_path)
+#     df["date_of_test"] = pd.to_datetime(df["date_of_test"], errors="coerce")
+#     df = df.sort_values(by="date_of_test")
 
-    exclude_columns = {"patient_id", "date_of_test", "age", "gender", "fasting_status"}
-    test_columns = [col for col in df.columns if col not in exclude_columns and df[col].dtype in [np.float64, np.int64]]
+#     exclude_columns = {"patient_id", "date_of_test", "age", "gender", "fasting_status"}
+#     test_columns = [col for col in df.columns if col not in exclude_columns and df[col].dtype in [np.float64, np.int64]]
 
-    if not test_columns:
-        print(f"⚠ No numerical test results found for Patient {patient_id}.")
-        return
+#     if not test_columns:
+#         print(f"⚠ No numerical test results found for Patient {patient_id}.")
+#         return
 
-    for test in test_columns:
-        translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
+#     for test in test_columns:
+#         translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
 
-        plt.figure(figsize=(10, 5))
-        plt.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
+#         plt.figure(figsize=(10, 5))
+#         plt.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
 
-        plt.xlabel("Дата анализа" if language == "ru" else "Test Date")
-        plt.ylabel(f"{translated_label} (U/L or mg/dL)")
-        plt.title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
-        plt.legend()
-        plt.xticks(rotation=45)
-        plt.grid(True)
-        plt.show()
+#         plt.xlabel("Дата анализа" if language == "ru" else "Test Date")
+#         plt.ylabel(f"{translated_label} (U/L or mg/dL)")
+#         plt.title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
+#         plt.legend()
+#         plt.xticks(rotation=45)
+#         plt.grid(True)
+#         plt.show()
+
+def plot_separate_patient_trends(patient_id, detected_lang):
+    fig, ax = plt.subplots(figsize=(10, 5))  # ✅ Create a figure object
+    
+    # Your existing plot logic...
+    ax.plot([1, 2, 3, 4], [10, 20, 25, 30])  # Example plot
+    
+    ax.set_title(f"📈 NAFLD Trends for Patient {patient_id}")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Liver Enzymes")
+
+    st.pyplot(fig)  # ✅ Use Streamlit to display the plot
+    plt.close(fig)  # ✅ Close figure to prevent memory leaks
