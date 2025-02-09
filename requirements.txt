@@ -1,0 +1,25 @@
+# Web framework
+streamlit==1.31.0
+fastapi==0.110.0
+uvicorn==0.27.1  # ASGI server for FastAPI
+
+# Image Processing
+opencv-python==4.9.0.80  # OpenCV for image preprocessing
+pytesseract==0.3.10  # OCR engine wrapper
+numpy==1.26.4  # Needed for image processing
+
+# Data Processing
+pandas==2.2.1  # Data handling
+fuzzywuzzy==0.18.0  # Fuzzy matching for test names
+python-Levenshtein==0.21.1  # Improves fuzzywuzzy performance
+langdetect==1.0.9  # Detects language
+deep-translator==1.11.4  # Translates text
+
+# Visualization
+matplotlib==3.8.3  # Plots trendlines
+
+# Google Translate (alternative)
+googletrans==4.0.0-rc1  # Backup translation option
+
+# File handling
+io
