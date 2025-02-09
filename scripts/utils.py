@@ -269,10 +269,10 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     Plots separate trend lines for each test result.
     - Uses Russian labels if language == "ru"
     """
-    patient_csv_path = f"patient_{patient_id}.csv"
+    patient_csv_path = f"data/patient_{patient_id}.csv"  # ✅ Ensure correct path
 
     if not os.path.exists(patient_csv_path):
-        print(f"No records found for Patient {patient_id}.")
+        st.warning(f"⚠ No records found for Patient {patient_id}.")
         return
     
     df = pd.read_csv(patient_csv_path)
@@ -283,19 +283,21 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     test_columns = [col for col in df.columns if col not in exclude_columns and df[col].dtype in [np.float64, np.int64]]
 
     if not test_columns:
-        print(f"⚠ No numerical test results found for Patient {patient_id}.")
+        st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
     for test in test_columns:
         translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
 
-        plt.figure(figsize=(10, 5))
-        plt.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
+        fig, ax = plt.subplots(figsize=(10, 5))  # ✅ Use Streamlit-friendly plotting
+        ax.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
 
-        plt.xlabel("Дата анализа" if language == "ru" else "Test Date")
-        plt.ylabel(f"{translated_label} (U/L or mg/dL)")
-        plt.title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
-        plt.legend()
+        ax.set_xlabel("Дата анализа" if language == "ru" else "Test Date")
+        ax.set_ylabel(f"{translated_label} (U/L or mg/dL)")
+        ax.set_title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
+        ax.legend()
+        ax.grid(True)
         plt.xticks(rotation=45)
-        plt.grid(True)
-        plt.show()
+
+        st.pyplot(fig)  # ✅ Use st.pyplot() instead of plt.show()
+        plt.close(fig)  # ✅ Prevent memory leaks
