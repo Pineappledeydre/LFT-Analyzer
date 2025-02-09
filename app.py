@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from scripts.pipeline import process_lft_pipeline
-from scripts.utils import detect_language, plot_separate_patient_trends
+from scripts.utils import plot_separate_patient_trends  # ✅ Removed detect_language (not needed)
 
 # Streamlit App Config
 st.set_page_config(page_title="LFT Analyzer", layout="wide")
@@ -23,16 +23,9 @@ if uploaded_file:
     with open(temp_image_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    # Process the LFT report and get patient ID
+    # Process the LFT report and get patient ID + detected language
     st.sidebar.text("🔄 Processing...")
-    extracted_patient_id = process_lft_pipeline(temp_image_path)
-
-    # Use extracted patient ID if found
-    if extracted_patient_id:
-        patient_id = extracted_patient_id
-
-    # Detect language for visualization
-    detected_lang = detect_language(temp_image_path)
+    patient_id, detected_lang = process_lft_pipeline(temp_image_path)  # FIXED
 
     # Show success message
     st.sidebar.success(f"Report processed successfully for Patient {patient_id}!")
@@ -49,8 +42,7 @@ if os.path.exists(data_path):
 
     # Show trend plots
     st.subheader("📈 Test Trends Over Time")
-    plot_separate_patient_trends(patient_id, detected_language)
-
+    plot_separate_patient_trends(patient_id, detected_lang)  # FIXED
 else:
     st.warning(f"⚠ No records found for Patient {patient_id}. Please upload an LFT report.")
 
