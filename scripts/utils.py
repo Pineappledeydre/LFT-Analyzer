@@ -282,8 +282,10 @@ def update_patient_record(data: dict):
 
 def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     """
-    Plots separate trend lines for each test result with abnormal values highlighted.
-    - Allows user to select which tests to visualize.
+    Plots selected test trends with:
+    - Green corridors for normal reference ranges
+    - Red shading for abnormal values
+    - User selection of tests to display
     """
     if isinstance(patient_id, tuple):  # ✅ Fix tuple issue
         patient_id = patient_id[0]
@@ -305,21 +307,37 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    # ✅ Generate a truly unique key for each patient
-    key_id = f"test_select_{patient_id}_{np.random.randint(1000)}"  # Adds randomness
+    # ✅ Generate a unique key using patient_id and session state
+    key_id = f"test_select_{patient_id}_{st.session_state.get('test_select_count', 0)}"
+    st.session_state["test_select_count"] = st.session_state.get("test_select_count", 0) + 1  # Increment key
 
     selected_tests = st.multiselect(
-        "Select Test Parameters to Visualize",
+        "📊 Select Tests to Display",
         test_columns,
-        default=test_columns[:3],
+        default=test_columns[:3],  # Show first 3 by default
         key=key_id  # ✅ Unique key
     )
 
     for test in selected_tests:
         plt.figure(figsize=(10, 5))
 
-        # ✅ Highlight abnormal values (above/below normal range)
+        # ✅ Plot the normal range as a green corridor
+        if test in REFERENCE_RANGES:
+            lower_bound, upper_bound = REFERENCE_RANGES[test]
+            plt.fill_between(df["date_of_test"], lower_bound, upper_bound, color="green", alpha=0.2, label="Normal Range")
+
+        # ✅ Highlight abnormal values (red shading)
+        above_norm = df[test] > REFERENCE_RANGES.get(test, (0, np.inf))[1]
+        below_norm = df[test] < REFERENCE_RANGES.get(test, (-np.inf, np.inf))[0]
+
         plt.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=test, color="blue")
+
+        if above_norm.any():
+            plt.fill_between(df["date_of_test"], df[test], REFERENCE_RANGES.get(test, (0, np.inf))[1], 
+                             color="red", alpha=0.3, label="Above Normal")
+        if below_norm.any():
+            plt.fill_between(df["date_of_test"], df[test], REFERENCE_RANGES.get(test, (-np.inf, np.inf))[0], 
+                             color="red", alpha=0.3, label="Below Normal")
 
         plt.xlabel("Test Date")
         plt.ylabel(f"{test} (U/L or mg/dL)")
