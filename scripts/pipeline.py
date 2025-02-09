@@ -15,7 +15,7 @@ def process_lft_pipeline(image_path: str) -> str:
         str: Extracted patient ID (or "12345" if missing)
     """
     print("Extracting text from LFT report...")
-    extracted_text, detected_lang = extract_text_from_image(image_path)
+    extracted_text, detected_language = extract_text_from_image(image_path)
 
     print("Parsing extracted text...")
     parsed_data = extract_lft_data(extracted_text)  
