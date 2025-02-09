@@ -11,6 +11,8 @@ import cv2
 import pytesseract
 import matplotlib.pyplot as plt
 import io
+import streamlit as st  
+import matplotlib.pyplot as plt
 
 # Set Tesseract path manually for Streamlit Cloud
 if "TESSDATA_PREFIX" not in os.environ:
@@ -298,15 +300,17 @@ def update_patient_record(data: dict):
 #         plt.grid(True)
 #         plt.show()
 
+
 def plot_separate_patient_trends(patient_id, detected_lang):
-    fig, ax = plt.subplots(figsize=(10, 5))  # ✅ Create a figure object
-    
-    # Your existing plot logic...
-    ax.plot([1, 2, 3, 4], [10, 20, 25, 30])  # Example plot
+    fig, ax = plt.subplots(figsize=(10, 5))  # ✅ Create figure
+
+    # Example plot (replace with actual data)
+    ax.plot([1, 2, 3, 4], [10, 20, 25, 30], label="NAFLD Trend")
     
     ax.set_title(f"📈 NAFLD Trends for Patient {patient_id}")
     ax.set_xlabel("Time")
     ax.set_ylabel("Liver Enzymes")
+    ax.legend()
 
-    st.pyplot(fig)  # ✅ Use Streamlit to display the plot
-    plt.close(fig)  # ✅ Close figure to prevent memory leaks
+    st.pyplot(fig)  # ✅ Display plot in Streamlit
+    plt.close(fig)  # ✅ Prevent memory leaks
