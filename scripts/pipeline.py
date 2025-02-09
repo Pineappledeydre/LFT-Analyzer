@@ -16,7 +16,7 @@ def process_lft_pipeline(image_path: str) -> str:
     - Parse details (convert Russian to English for storage)
     - Save/update patient test history
     - Plot trends (use Russian labels if detected_lang == 'ru')
-    
+
     Returns:
         str: Extracted patient ID (or "12345" if missing)
     """
@@ -24,7 +24,7 @@ def process_lft_pipeline(image_path: str) -> str:
     extracted_text, detected_lang = extract_text_from_image(image_path)
 
     print("🔎 Parsing extracted text...")
-    parsed_data = extract_lft_data(extracted_text)
+    parsed_data = extract_lft_data(extracted_text, detected_lang)  # ✅ FIXED
 
     if not parsed_data or "patient_id" not in parsed_data or not parsed_data["patient_id"]:
         print("⚠ No patient ID found. Using default: 12345")
