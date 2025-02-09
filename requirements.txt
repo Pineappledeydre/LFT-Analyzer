@@ -1,12 +1,12 @@
 streamlit==1.31.0
 fastapi==0.110.0
 uvicorn==0.27.1
-opencv-python==4.9.0.80
+opencv-python-headless==4.9.0.80  
 pytesseract==0.3.10
 numpy==1.26.4
 pandas==2.2.1
 fuzzywuzzy==0.18.0
-Levenshtein==0.25.0  # Alternative for python-Levenshtein
+Levenshtein==0.25.0
 langdetect==1.0.9
-deep-translator==1.11.4  # Replaces googletrans
+deep-translator==1.11.4
 matplotlib==3.8.3
