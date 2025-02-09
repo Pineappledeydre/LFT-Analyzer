@@ -1,5 +1,6 @@
 cmake
 build-essential
-
+libgl1
+libglib2.0-0
 tesseract-ocr
 libtesseract-dev
