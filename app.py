@@ -25,8 +25,13 @@ if uploaded_file:
     with open(temp_image_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    st.sidebar.text("🔄 Processing...")
-    patient_id = process_lft_pipeline(temp_image_path)
+    result = process_lft_pipeline(temp_image_path)  
+
+    if isinstance(result, tuple):  # Ensure it's correctly unpacked
+        patient_id, detected_lang = result
+    else:
+        patient_id = result
+        detected_lang = "en"  # Default language if not returned
 
     # Show success message
     st.sidebar.success(f"✅ Report processed successfully for Patient {patient_id}!")
