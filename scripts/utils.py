@@ -12,6 +12,11 @@ import pytesseract
 import matplotlib.pyplot as plt
 import io
 
+# Set Tesseract path manually for Streamlit Cloud
+if "TESSDATA_PREFIX" not in os.environ:
+    os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/4.00/tessdata/"
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+
 # Define standard column mappings
 STANDARD_COLUMNS = {
     "Total Bilirubin": "Total Bilirubin",
