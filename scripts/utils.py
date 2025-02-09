@@ -10,7 +10,6 @@ from fastapi import FastAPI, File, UploadFile
 import cv2
 import pytesseract
 import matplotlib.pyplot as plt
-from googletrans import Translator
 import io
 
 # Define standard column mappings
