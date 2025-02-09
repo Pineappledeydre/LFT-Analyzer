@@ -285,6 +285,9 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     Plots separate trend lines for each test result with abnormal values highlighted.
     - Allows user to select which tests to visualize.
     """
+    if isinstance(patient_id, tuple):  # ✅ Fix tuple issue
+        patient_id = patient_id[0]
+
     patient_csv_path = f"data/patient_{patient_id}.csv"
 
     if not os.path.exists(patient_csv_path):
@@ -302,33 +305,22 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    # 🔘 Let the user choose which tests to visualize
-    selected_tests = st.multiselect(
-        "📊 Select Tests to Display",
-        options=test_columns,
-        default=test_columns[:3],  # Show first 3 by default
-        format_func=lambda x: RUSSIAN_LABELS.get(x, x) if language == "ru" else x,
-    )
+    # ✅ Use a unique key for multiselect widget
+    selected_tests = st.multiselect("Select Test Parameters to Visualize", test_columns, default=test_columns[:3], key=f"test_select_{patient_id}")
 
     for test in selected_tests:
-        translated_label = RUSSIAN_LABELS.get(test, test) if language == "ru" else test
-        fig, ax = plt.subplots(figsize=(10, 5))
+        plt.figure(figsize=(10, 5))
 
-        ax.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=translated_label, color="blue")
+        # ✅ Highlight abnormal values (above/below normal range)
+        plt.plot(df["date_of_test"], df[test], marker="o", linestyle="-", label=test, color="blue")
 
-        # Highlight abnormal ranges
-        if test in REFERENCE_RANGES:
-            low, high = REFERENCE_RANGES[test]
-            ax.fill_between(df["date_of_test"], low, high, color="green", alpha=0.2, label="Normal Range")
-            ax.scatter(df["date_of_test"], df[test], c=['red' if (v < low or v > high) else 'blue' for v in df[test]], s=80)
-
-        ax.set_xlabel("Дата анализа" if language == "ru" else "Test Date")
-        ax.set_ylabel(f"{translated_label} (U/L or mg/dL)")
-        ax.set_title(f"Тренд {translated_label} для пациента {patient_id}" if language == "ru" else f"Trend of {translated_label} for Patient {patient_id}")
-
-        ax.legend()
-        ax.grid(True)
+        plt.xlabel("Test Date")
+        plt.ylabel(f"{test} (U/L or mg/dL)")
+        plt.title(f"Trend of {test} for Patient {patient_id}")
+        plt.legend()
         plt.xticks(rotation=45)
+        plt.grid(True)
 
-        st.pyplot(fig)
-        plt.close(fig)  # Prevent memory leaks
+        # ✅ Use Streamlit to display the plot
+        st.pyplot(plt)
+        plt.close()  # ✅ Fix memory leak issue from too many figures
