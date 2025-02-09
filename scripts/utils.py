@@ -9,6 +9,7 @@ from deep_translator import GoogleTranslator
 from fastapi import FastAPI, File, UploadFile
 import cv2
 import pytesseract
+from scripts.utils import preprocess_image 
 import matplotlib.pyplot as plt
 import io
 
