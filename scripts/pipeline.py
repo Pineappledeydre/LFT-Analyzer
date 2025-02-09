@@ -1,3 +1,13 @@
+import os
+import pandas as pd
+from scripts.utils import (
+    extract_text_from_image,  
+    extract_lft_data,
+    format_results_for_display,
+    update_patient_record,
+    plot_separate_patient_trends
+)
+
 def process_lft_pipeline(image_path: str) -> tuple:
     """
     Complete pipeline for processing LFT reports:
