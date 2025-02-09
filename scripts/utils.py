@@ -305,8 +305,15 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
         st.warning(f"⚠ No numerical test results found for Patient {patient_id}.")
         return
 
-    # ✅ Use a unique key for multiselect widget
-    selected_tests = st.multiselect("Select Test Parameters to Visualize", test_columns, default=test_columns[:3], key=f"test_select_{patient_id}")
+    # ✅ Generate a truly unique key for each patient
+    key_id = f"test_select_{patient_id}_{np.random.randint(1000)}"  # Adds randomness
+
+    selected_tests = st.multiselect(
+        "Select Test Parameters to Visualize",
+        test_columns,
+        default=test_columns[:3],
+        key=key_id  # ✅ Unique key
+    )
 
     for test in selected_tests:
         plt.figure(figsize=(10, 5))
