@@ -279,7 +279,6 @@ def update_patient_record(data: dict):
         new_entry.to_csv(patient_csv_path, index=False)
         print(f"Created new record file `{patient_csv_path}` for Patient {patient_id}.")
 
-
 def plot_separate_patient_trends(patient_id: str, language: str = "en"):
     """
     Plots selected test trends with:
@@ -313,11 +312,11 @@ def plot_separate_patient_trends(patient_id: str, language: str = "en"):
 
     selected_tests = st.multiselect(
         "📊 Select Tests to Display",
-        test_columns,
-        default=test_columns[:3],  # Show first 3 by default
-        key=widget_key  # ✅ Ensuring unique widget key
+        options=test_columns,
+        default=test_columns[:3],  # Show first 3 tests by default
+        format_func=lambda x: RUSSIAN_LABELS.get(x, x) if language == "ru" else x,
+        key=f"test_select_{patient_id}"  # ✅ UNIQUE KEY for each patient
     )
-
     for test in selected_tests:
         plt.figure(figsize=(10, 5))
 
