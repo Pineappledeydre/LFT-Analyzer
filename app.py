@@ -35,18 +35,18 @@ if uploaded_file:
     # Show success message
     st.sidebar.success(f"✅ Report processed successfully for Patient {patient_id}!")
 
-    # 📂 Load patient data before plotting
+    # Load patient data before plotting
     data_path = f"data/patient_{patient_id}.csv"
     if os.path.exists(data_path):
         df = pd.read_csv(data_path)
         
-        # ✅ Show patient records FIRST
+        # Show patient records 
         st.subheader(f"📂 Patient Records (ID: {patient_id})")
         st.dataframe(df)
         
-        # 📊 Now show test trends (after patient data exists)
-        st.subheader("📈 Test Trends Over Time")
-        plot_separate_patient_trends(patient_id, detected_lang)  
+        #  show test trends (after patient data exists)
+        # st.subheader("📈 Test Trends Over Time")
+        # plot_separate_patient_trends(patient_id, detected_lang)  
 
 st.markdown("---")
 st.markdown("**ℹ Note:** The app automatically processes and stores LFT data for detected patient IDs.")
